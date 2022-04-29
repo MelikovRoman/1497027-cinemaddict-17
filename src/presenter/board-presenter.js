@@ -6,6 +6,7 @@ import BoardView from '../view/board-view';
 import NewShowMoreBtn from '../view/btn-show-more';
 import FilmCard from '../view/film-card';
 import NumberOfFilms from '../view/number-of-films';
+import Popup from '../view/popup.js';
 
 
 export default class BoardPresenter {
@@ -21,5 +22,6 @@ export default class BoardPresenter {
 
     render(new NewShowMoreBtn(), document.querySelector('.films-list'));
     render(new NumberOfFilms(), document.querySelector('.footer__statistics'));
+    render(new Popup(), document.querySelector('body'));
   };
 }
