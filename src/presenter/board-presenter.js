@@ -10,18 +10,28 @@ import Popup from '../view/popup.js';
 
 
 export default class BoardPresenter {
-  init = (boardContainer) => {
+  init = (boardContainer, filmsModel) => {
+    this.filmsModel = filmsModel;
+    this.boardFilms = [...this.filmsModel.getFilms()];
+    this.boardComments = [...this.filmsModel.getComments()];
+
     render(new ProfileRating(), document.querySelector('.header'));
     render(new Navigation(), boardContainer);
     render(new SortList(), boardContainer);
     render(new BoardView(), boardContainer);
 
-    for (let i = 0; i < 5; i++) {
-      render(new FilmCard(), document.querySelector('.films-list__container'));
+    for (let i = 0; i < this.boardFilms.length; i++) {
+      render(new FilmCard(this.boardFilms[i]), document.querySelector('.films-list__container'));
     }
 
     render(new NewShowMoreBtn(), document.querySelector('.films-list'));
     render(new NumberOfFilms(), document.querySelector('.footer__statistics'));
-    render(new Popup(), document.querySelector('body'));
+
+    document.querySelector('.films-list__container').addEventListener('click', (evt) => {
+      const currentElem = evt.target.closest('.film-card');
+      if (currentElem) {
+        render(new Popup(this.boardFilms[1]), document.querySelector('body'));
+      }
+    });
   };
 }
