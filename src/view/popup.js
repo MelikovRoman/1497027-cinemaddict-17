@@ -1,10 +1,8 @@
 import {createElement} from '../render.js';
 import {humanizeReleaseFullDueDate, humanizeCommentDate, isFilmInWatchlist, isFilmWached, isFilmInFavorite} from '../util.js';
 
-const createNewPopup = (film, allComments) => {
+const createNewPopup = (film) => {
   const {title, alternativeTitle, totalRating, release, description, director, poster, writers, actors, runtime, ageRating, userDetails, comments} = film;
-
-  const selectedComments = allComments.filter(({id}) => comments.some((commentId) => commentId === Number(id)));
 
   const releaseDate = release.date !== null
     ? humanizeReleaseFullDueDate(release.date)
@@ -23,7 +21,7 @@ const createNewPopup = (film, allComments) => {
     : '';
 
   const createCommentTemplate = () => (
-    selectedComments.map(({author, comment, date, emotion}) => (
+    comments.map(({author, comment, date, emotion}) => (
       `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
         <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
@@ -114,7 +112,7 @@ const createNewPopup = (film, allComments) => {
 
     <div class="film-details__bottom-container">
       <section class="film-details__comments-wrap">
-        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
+        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
         <ul class="film-details__comments-list">
           ${commentTemplate}

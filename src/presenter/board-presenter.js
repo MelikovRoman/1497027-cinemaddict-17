@@ -13,7 +13,6 @@ export default class BoardPresenter {
   init = (boardContainer, filmsModel) => {
     this.filmsModel = filmsModel;
     this.boardFilms = [...this.filmsModel.getFilms()];
-    this.comments = [...this.filmsModel.getComments()];
 
     render(new ProfileRating(), document.querySelector('.header'));
     render(new Navigation(), boardContainer);
@@ -30,7 +29,7 @@ export default class BoardPresenter {
     document.querySelector('.films-list__container').addEventListener('click', (evt) => {
       const currentElem = evt.target.closest('.film-card');
       if (currentElem) {
-        render(new Popup(this.boardFilms[1], this.comments), document.querySelector('body'));
+        render(new Popup(this.boardFilms[1]), document.querySelector('body'));
       }
     });
   };
