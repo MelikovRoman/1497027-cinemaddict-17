@@ -1,8 +1,8 @@
+import {getRandomInteger} from '../util.js';
+
 export const generateFilm = () => ({
   id: '0',
-  ///comments: [
-  //$Comment.2$, $Comment.id$
-  //],
+  comments: [1, 2, 3, 4],
   title: 'A Little Pony Without The Carpet',
   alternativeTitle: 'Laziness Who Sold Themselves',
   totalRating: 5.3,
@@ -34,9 +34,9 @@ export const generateFilm = () => ({
 });
 
 export const generateComment = () => ({
-  id: '0',
+  id: getRandomInteger(0, 20),
   author: 'Ilya O\'Reilly',
   comment: 'a film that changed my life, a true masterpiece, post-credit scene was just amazing omg.',
-  date: '2019-05-11T16:12:32.554Z',
+  date: '2018-05-11T19:12:32.554Z',
   emotion: 'smile'
 });
