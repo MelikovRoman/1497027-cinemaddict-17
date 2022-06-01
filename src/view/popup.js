@@ -156,24 +156,28 @@ const createNewPopup = (film) => {
 
 
 export default class Popup {
+  #element = null;
+  #film = null;
+  #comments = null;
+
   constructor(film, allComments) {
-    this.film = film;
-    this.comments = allComments;
+    this.#film = film;
+    this.#comments = allComments;
   }
 
-  getTemplate() {
-    return createNewPopup(this.film, this.comments);
+  get template() {
+    return createNewPopup(this.#film, this.#comments);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

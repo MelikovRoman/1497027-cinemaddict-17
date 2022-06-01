@@ -10,27 +10,63 @@ import Popup from '../view/popup.js';
 
 
 export default class BoardPresenter {
+  #filmsModel = null;
+  #boardContainer = null;
+  #boardFilms = [];
+
   init = (boardContainer, filmsModel) => {
-    this.filmsModel = filmsModel;
-    this.boardFilms = [...this.filmsModel.getFilms()];
+    this.#boardContainer = boardContainer;
+    this.#filmsModel = filmsModel;
+    this.#boardFilms = [...this.#filmsModel.films];
 
     render(new ProfileRating(), document.querySelector('.header'));
-    render(new Navigation(), boardContainer);
-    render(new SortList(), boardContainer);
-    render(new BoardView(), boardContainer);
+    render(new Navigation(), this.#boardContainer);
+    render(new SortList(), this.#boardContainer);
+    render(new BoardView(), this.#boardContainer);
 
-    for (let i = 0; i < this.boardFilms.length; i++) {
-      render(new FilmCard(this.boardFilms[i]), document.querySelector('.films-list__container'));
+    for (let i = 0; i < this.#boardFilms.length; i++) {
+      this.#renderFilms(this.#boardFilms[i]);
     }
 
     render(new NewShowMoreBtn(), document.querySelector('.films-list'));
     render(new NumberOfFilms(), document.querySelector('.footer__statistics'));
 
-    document.querySelector('.films-list__container').addEventListener('click', (evt) => {
+  };
+
+  #renderFilms = (film) => {
+    const filmComponent = new FilmCard(film);
+    const filmPopupComponent = new Popup(this.#boardFilms[1]);
+
+    const openFilmPopup = () => {
+      document.querySelector('body').appendChild(filmPopupComponent.element);
+    };
+
+    const closeFilmPopup = () => {
+      document.querySelector('body').removeChild(filmPopupComponent.element);
+    };
+
+    const onEscKeyDown = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        evt.preventDefault();
+        closeFilmPopup();
+        document.removeEventListener('keydown', onEscKeyDown);
+      }
+    };
+
+    filmComponent.element.addEventListener('click', (evt) => {
       const currentElem = evt.target.closest('.film-card');
       if (currentElem) {
-        render(new Popup(this.boardFilms[1]), document.querySelector('body'));
+        openFilmPopup();
+        document.addEventListener('keydown', onEscKeyDown);
       }
     });
+
+    filmPopupComponent.element.querySelector('.film-details__close-btn').addEventListener('click', (evt) => {
+      evt.preventDefault();
+      closeFilmPopup();
+      document.removeEventListener('keydown', onEscKeyDown);
+    });
+
+    render(filmComponent, document.querySelector('.films-list__container'));
   };
 }
