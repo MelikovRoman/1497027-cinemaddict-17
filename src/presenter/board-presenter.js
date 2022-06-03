@@ -7,30 +7,66 @@ import NewShowMoreBtn from '../view/btn-show-more';
 import FilmCard from '../view/film-card';
 import NumberOfFilms from '../view/number-of-films';
 import Popup from '../view/popup.js';
+import NoFilmsView from '../view/no-films-view.js';
 
+const FILM_COUNT_PER_STEP = 5;
 
 export default class BoardPresenter {
   #filmsModel = null;
   #boardContainer = null;
   #boardFilms = [];
+  #renderedFilmCount = FILM_COUNT_PER_STEP;
 
-  init = (boardContainer, filmsModel) => {
+  #loadMoreButtonComponent = new NewShowMoreBtn();
+
+  constructor (boardContainer, filmsModel) {
     this.#boardContainer = boardContainer;
     this.#filmsModel = filmsModel;
+  }
+
+  init = () => {
     this.#boardFilms = [...this.#filmsModel.films];
 
+    this.#renderBoard();
+  };
+
+  #renderBoard = () => {
     render(new ProfileRating(), document.querySelector('.header'));
     render(new Navigation(), this.#boardContainer);
-    render(new SortList(), this.#boardContainer);
-    render(new BoardView(), this.#boardContainer);
 
-    for (let i = 0; i < this.#boardFilms.length; i++) {
+    if (this.#boardFilms.length === 0) {
+      render(new NoFilmsView(), this.#boardContainer);
+    } else {
+      render(new SortList(), this.#boardContainer);
+      render(new BoardView(), this.#boardContainer);
+    }
+
+    for (let i = 0; i < Math.min(this.#boardFilms.length, FILM_COUNT_PER_STEP); i++) {
       this.#renderFilms(this.#boardFilms[i]);
     }
 
-    render(new NewShowMoreBtn(), document.querySelector('.films-list'));
-    render(new NumberOfFilms(), document.querySelector('.footer__statistics'));
+    if (this.#boardFilms.length > FILM_COUNT_PER_STEP) {
+      render(this.#loadMoreButtonComponent, document.querySelector('.films-list'));
 
+      this.#loadMoreButtonComponent.element.addEventListener('click', this.#handleLoadMoreButtonClick);
+    }
+
+
+    render(new NumberOfFilms(), document.querySelector('.footer__statistics'));
+  };
+
+  #handleLoadMoreButtonClick = (evt) => {
+    evt.preventDefault();
+    this.#boardFilms
+      .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
+      .forEach((task) => this.#renderFilms(task));
+
+    this.#renderedFilmCount += FILM_COUNT_PER_STEP;
+
+    if (this.#renderedFilmCount >= this.#boardFilms.length) {
+      this.#loadMoreButtonComponent.element.remove();
+      this.#loadMoreButtonComponent.removeElement();
+    }
   };
 
   #renderFilms = (film) => {
